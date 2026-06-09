@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class DishDao {
+public class DishDao implements DishRepository {
+    @Override
     public List<Dish> search(String keyword, Integer categoryId, boolean onlyActive) {
         StringBuilder sql = new StringBuilder("""
                 SELECT d.*, c.name AS category_name
@@ -48,6 +49,7 @@ public class DishDao {
         }
     }
 
+    @Override
     public Optional<Dish> findById(int id) {
         String sql = """
                 SELECT d.*, c.name AS category_name
@@ -66,6 +68,7 @@ public class DishDao {
         }
     }
 
+    @Override
     public void save(Dish dish) {
         if (dish.getId() == 0) {
             insert(dish);
@@ -74,18 +77,19 @@ public class DishDao {
         }
     }
 
+    @Override
     public void delete(int id) {
         try (Connection connection = Database.getConnection();
-             PreparedStatement statement = connection.prepareStatement("UPDATE dishes SET status = 'OUT_OF_STOCK' WHERE id = ?")) {
+             PreparedStatement statement = connection.prepareStatement("DELETE FROM dishes WHERE id = ?")) {
             statement.setInt(1, id);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new IllegalStateException("Cannot delete dish", e);
+            throw new IllegalStateException("Không thể xóa món ăn đang được tham chiếu trong preorder, order hoặc dữ liệu lịch sử.", e);
         }
     }
 
     private void insert(Dish dish) {
-        String sql = "INSERT INTO dishes(category_id, name, description, price, image_url, status) VALUES (?, ?, ?, ?, ?, 'AVAILABLE')";
+        String sql = "INSERT INTO dishes(category_id, name, description, price, image_url, status) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, dish.getCategoryId());
@@ -93,6 +97,7 @@ public class DishDao {
             statement.setString(3, dish.getDescription());
             statement.setBigDecimal(4, dish.getPrice());
             statement.setString(5, dish.getImageUrl());
+            statement.setString(6, dish.getStatus());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot insert dish", e);
@@ -108,7 +113,7 @@ public class DishDao {
             statement.setString(3, dish.getDescription());
             statement.setBigDecimal(4, dish.getPrice());
             statement.setString(5, dish.getImageUrl());
-            statement.setString(6, dish.isActive() ? "AVAILABLE" : "OUT_OF_STOCK");
+            statement.setString(6, dish.getStatus());
             statement.setInt(7, dish.getId());
             statement.executeUpdate();
         } catch (SQLException e) {

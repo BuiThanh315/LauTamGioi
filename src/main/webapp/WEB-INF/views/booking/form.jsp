@@ -24,7 +24,7 @@
             <label style="grid-column:1/-1">Ghi chú
                 <textarea name="note" maxlength="1000" placeholder="Không gian, món muốn giữ trước, yêu cầu đặc biệt"></textarea>
             </label>
-            <button type="submit">Gửi đặt bàn</button>
+            <button type="submit">Gửi đơn đặt bàn</button>
         </form>
     </section>
 </main>

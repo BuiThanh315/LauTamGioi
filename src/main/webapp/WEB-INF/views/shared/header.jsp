@@ -12,28 +12,41 @@
 <header class="topbar">
     <a class="brand" href="${pageContext.request.contextPath}/home">Lẩu Tam Giới</a>
     <nav class="nav">
-        <a href="${pageContext.request.contextPath}/menu">Thực đơn</a>
-        <c:choose>
-            <c:when test="${not empty sessionScope.account}">
-                <c:if test="${sessionScope.account.role == 'CUSTOMER'}">
-                    <a href="${pageContext.request.contextPath}/booking/new">Đặt bàn</a>
-                    <a href="${pageContext.request.contextPath}/booking/history">Lịch sử</a>
-                </c:if>
-                <c:if test="${sessionScope.account.role == 'STAFF' || sessionScope.account.role == 'ADMIN'}">
-                    <a href="${pageContext.request.contextPath}/staff/bookings">Vận hành</a>
-                </c:if>
-                <c:if test="${sessionScope.account.role == 'ADMIN'}">
-                    <a href="${pageContext.request.contextPath}/admin/dishes">Món</a>
-                    <a href="${pageContext.request.contextPath}/admin/categories">Danh mục</a>
-                    <a href="${pageContext.request.contextPath}/admin/reports">Báo cáo</a>
-                </c:if>
-                <a href="${pageContext.request.contextPath}/logout">${sessionScope.account.fullName}</a>
-            </c:when>
-            <c:otherwise>
-                <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>
-                <a href="${pageContext.request.contextPath}/register">Đăng ký</a>
-            </c:otherwise>
-        </c:choose>
+        <div class="nav-group">
+            <a href="${pageContext.request.contextPath}/menu">Thực đơn</a>
+            <c:if test="${not empty sessionScope.account && sessionScope.account.role == 'CUSTOMER'}">
+                <a href="${pageContext.request.contextPath}/booking/new">Đặt bàn</a>
+                <a href="${pageContext.request.contextPath}/booking/history">Lịch sử đặt bàn</a>
+            </c:if>
+            <c:if test="${not empty sessionScope.account && sessionScope.account.role == 'STAFF'}">
+                <a href="${pageContext.request.contextPath}/staff/bookings">Điều phối đặt bàn</a>
+            </c:if>
+            <c:if test="${not empty sessionScope.account && sessionScope.account.role == 'ADMIN'}">
+                <a href="${pageContext.request.contextPath}/admin/bookings">Đơn đặt bàn</a>
+                <a href="${pageContext.request.contextPath}/admin/dishes">Món ăn</a>
+                <a href="${pageContext.request.contextPath}/admin/categories">Danh mục</a>
+                <a href="${pageContext.request.contextPath}/admin/reports">Báo cáo</a>
+            </c:if>
+        </div>
+        <div class="nav-group">
+            <c:choose>
+                <c:when test="${not empty sessionScope.account}">
+                    <c:choose>
+                        <c:when test="${sessionScope.account.role == 'CUSTOMER'}">
+                            <a class="user-pill user-link" href="${pageContext.request.contextPath}/customer/profile">${sessionScope.account.fullName}</a>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="user-pill">${sessionScope.account.fullName}</span>
+                        </c:otherwise>
+                    </c:choose>
+                    <a class="btn secondary" href="${pageContext.request.contextPath}/logout">Đăng xuất</a>
+                </c:when>
+                <c:otherwise>
+                    <a href="${pageContext.request.contextPath}/login">Đăng nhập</a>
+                    <a class="btn secondary" href="${pageContext.request.contextPath}/register">Đăng ký</a>
+                </c:otherwise>
+            </c:choose>
+        </div>
     </nav>
 </header>
 <c:if test="${not empty sessionScope.flash}">

@@ -7,7 +7,14 @@
         <p>Không gian lẩu Á Đông thanh lịch, nơi vị thanh của Thiên Giới, vị hòa của Nhân Giới và vị cay sâu của Ma Giới gặp nhau trong một bàn tiệc.</p>
         <div class="actions">
             <a class="btn" href="${pageContext.request.contextPath}/menu">Xem thực đơn</a>
-            <a class="btn secondary" href="${pageContext.request.contextPath}/booking/new">Đặt bàn</a>
+            <c:choose>
+                <c:when test="${not empty sessionScope.account && sessionScope.account.role == 'CUSTOMER'}">
+                    <a class="btn secondary" href="${pageContext.request.contextPath}/booking/new">Đặt bàn</a>
+                </c:when>
+                <c:otherwise>
+                    <a class="btn secondary" href="${pageContext.request.contextPath}/login">Đăng nhập để đặt bàn</a>
+                </c:otherwise>
+            </c:choose>
         </div>
     </div>
 </section>

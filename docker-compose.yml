@@ -21,7 +21,7 @@ services:
       DB_USER: root
       DB_PASSWORD: 123456
     ports:
-      - "8080:8080"
+      - "8080:10000"
 
 volumes:
   mysql-data:

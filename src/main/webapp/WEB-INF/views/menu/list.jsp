@@ -7,7 +7,6 @@
             <p class="eyebrow">Menu</p>
             <h1>Thực đơn Tam Giới</h1>
         </div>
-        <a class="btn" href="${pageContext.request.contextPath}/booking/new">Đặt bàn</a>
     </div>
     <section class="toolbar">
         <form method="get" action="${pageContext.request.contextPath}/menu">
@@ -26,13 +25,15 @@
     <section class="grid">
         <c:forEach items="${dishes}" var="dish">
             <article class="card">
-                <img class="dish-img" src="${dish.imageUrl}" alt="${dish.name}">
+                <img class="dish-img" src="${dish.imageUrl}" alt="${dish.name}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80';">
                 <div class="card-body">
                     <span class="badge">${dish.categoryName}</span>
                     <h3>${dish.name}</h3>
                     <p class="muted">${dish.description}</p>
                     <p class="price"><fmt:formatNumber value="${dish.price}" type="number" groupingUsed="true"/> VND</p>
-                    <a class="btn ghost" href="${pageContext.request.contextPath}/dish?id=${dish.id}">Chi tiết</a>
+                    <div class="actions">
+                        <a class="btn ghost" href="${pageContext.request.contextPath}/dish?id=${dish.id}">Chi tiết</a>
+                    </div>
                 </div>
             </article>
         </c:forEach>

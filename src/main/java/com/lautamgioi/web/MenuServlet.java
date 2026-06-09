@@ -1,6 +1,7 @@
 package com.lautamgioi.web;
 
 import com.lautamgioi.service.MenuService;
+import com.lautamgioi.service.MenuUseCase;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,7 +12,7 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = {"/menu", "/dish"})
 public class MenuServlet extends HttpServlet {
-    private final MenuService menuService = new MenuService();
+    private final MenuUseCase menuService = new MenuService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

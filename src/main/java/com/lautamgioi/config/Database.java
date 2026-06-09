@@ -5,7 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public final class Database {
-    private static final String DEFAULT_URL = "jdbc:mysql://localhost:3306/lautamgioi_db?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Ho_Chi_Minh";
+    private static final String DEFAULT_URL =
+            "jdbc:mysql://localhost:3306/lautamgioi_db?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Ho_Chi_Minh";
     private static final String DEFAULT_USER = "root";
     private static final String DEFAULT_PASSWORD = "123456";
 
@@ -21,10 +22,25 @@ public final class Database {
     }
 
     public static Connection getConnection() throws SQLException {
-        String url = env("DB_URL", DEFAULT_URL);
+        String url = buildUrl();
         String user = env("DB_USER", DEFAULT_USER);
         String password = env("DB_PASSWORD", DEFAULT_PASSWORD);
         return DriverManager.getConnection(url, user, password);
+    }
+
+    private static String buildUrl() {
+        String explicitUrl = System.getenv("DB_URL");
+        if (explicitUrl != null && !explicitUrl.isBlank()) {
+            return explicitUrl;
+        }
+        String host = System.getenv("DB_HOST");
+        if (host == null || host.isBlank()) {
+            return DEFAULT_URL;
+        }
+        String port = env("DB_PORT", "3306");
+        String database = env("DB_NAME", "lautamgioi_db");
+        return "jdbc:mysql://" + host + ":" + port + "/" + database
+                + "?useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci&serverTimezone=Asia/Ho_Chi_Minh";
     }
 
     private static String env(String key, String fallback) {

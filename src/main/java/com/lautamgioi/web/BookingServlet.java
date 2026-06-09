@@ -3,6 +3,7 @@ package com.lautamgioi.web;
 import com.lautamgioi.model.Account;
 import com.lautamgioi.model.Booking;
 import com.lautamgioi.service.BookingService;
+import com.lautamgioi.service.BookingUseCase;
 import com.lautamgioi.service.ValidationException;
 import com.lautamgioi.service.Validators;
 import jakarta.servlet.ServletException;
@@ -15,7 +16,7 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = {"/booking/new", "/booking/history"})
 public class BookingServlet extends HttpServlet {
-    private final BookingService bookingService = new BookingService();
+    private final BookingUseCase bookingService = new BookingService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -25,7 +26,8 @@ public class BookingServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/views/booking/history.jsp").forward(request, response);
             return;
         }
-        showForm(request, response);
+        request.setAttribute("tableTypes", bookingService.tableTypes());
+        request.getRequestDispatcher("/WEB-INF/views/booking/form.jsp").forward(request, response);
     }
 
     @Override
@@ -41,16 +43,12 @@ public class BookingServlet extends HttpServlet {
             booking.setBookingTime(Validators.bookingTime(request.getParameter("bookingTime")));
             booking.setNote(Validators.optional(request.getParameter("note"), "Ghi chú", 1000));
             bookingService.create(booking);
-            WebUtil.flash(request, "Yêu cầu đặt bàn đã được gửi.");
+            WebUtil.flash(request, "Đơn đặt bàn đã được gửi tới quản trị viên để xác nhận.");
             response.sendRedirect(WebUtil.context(request, "/booking/history"));
         } catch (ValidationException e) {
             request.setAttribute("error", e.getMessage());
-            showForm(request, response);
+            request.setAttribute("tableTypes", bookingService.tableTypes());
+            request.getRequestDispatcher("/WEB-INF/views/booking/form.jsp").forward(request, response);
         }
-    }
-
-    private void showForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("tableTypes", bookingService.tableTypes());
-        request.getRequestDispatcher("/WEB-INF/views/booking/form.jsp").forward(request, response);
     }
 }

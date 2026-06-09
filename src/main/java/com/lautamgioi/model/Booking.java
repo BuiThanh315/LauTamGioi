@@ -1,6 +1,7 @@
 package com.lautamgioi.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class Booking {
@@ -9,12 +10,16 @@ public class Booking {
     private String customerName;
     private String phone;
     private int tableTypeId;
+    private String tableTypeLabel;
     private int capacity;
     private String tableClass;
+    private Integer assignedTableId;
+    private String assignedTableNumber;
     private LocalDate bookingDate;
     private LocalTime bookingTime;
     private String note;
     private String status;
+    private LocalDateTime createdAt;
 
     public int getId() {
         return id;
@@ -56,6 +61,14 @@ public class Booking {
         this.tableTypeId = tableTypeId;
     }
 
+    public String getTableTypeLabel() {
+        return tableTypeLabel;
+    }
+
+    public void setTableTypeLabel(String tableTypeLabel) {
+        this.tableTypeLabel = tableTypeLabel;
+    }
+
     public int getCapacity() {
         return capacity;
     }
@@ -70,6 +83,22 @@ public class Booking {
 
     public void setTableClass(String tableClass) {
         this.tableClass = tableClass;
+    }
+
+    public Integer getAssignedTableId() {
+        return assignedTableId;
+    }
+
+    public void setAssignedTableId(Integer assignedTableId) {
+        this.assignedTableId = assignedTableId;
+    }
+
+    public String getAssignedTableNumber() {
+        return assignedTableNumber;
+    }
+
+    public void setAssignedTableNumber(String assignedTableNumber) {
+        this.assignedTableNumber = assignedTableNumber;
     }
 
     public LocalDate getBookingDate() {
@@ -102,5 +131,29 @@ public class Booking {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public boolean isPending() {
+        return "PENDING".equals(status);
+    }
+
+    public boolean isConfirmed() {
+        return "CONFIRMED".equals(status);
+    }
+
+    public boolean isSeated() {
+        return "SEATED".equals(status);
+    }
+
+    public boolean isPaid() {
+        return "PAID".equals(status);
     }
 }

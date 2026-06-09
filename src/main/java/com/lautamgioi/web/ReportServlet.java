@@ -1,6 +1,7 @@
 package com.lautamgioi.web;
 
 import com.lautamgioi.service.OrderService;
+import com.lautamgioi.service.OrderUseCase;
 import com.lautamgioi.service.ValidationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 
 @WebServlet("/admin/reports")
 public class ReportServlet extends HttpServlet {
-    private final OrderService orderService = new OrderService();
+    private final OrderUseCase orderService = new OrderService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

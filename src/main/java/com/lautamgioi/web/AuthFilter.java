@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/booking/*", "/staff/*", "/admin/*"})
+@WebFilter(urlPatterns = {"/booking/*", "/customer/*", "/staff/*", "/admin/*"})
 public class AuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -25,11 +25,15 @@ public class AuthFilter implements Filter {
             return;
         }
         String path = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
+        if ((path.startsWith("/booking") || path.startsWith("/customer")) && account.getRole() != Role.CUSTOMER) {
+            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
         if (path.startsWith("/admin") && account.getRole() != Role.ADMIN) {
             httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
-        if (path.startsWith("/staff") && account.getRole() != Role.STAFF && account.getRole() != Role.ADMIN) {
+        if (path.startsWith("/staff") && account.getRole() != Role.STAFF) {
             httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }

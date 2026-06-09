@@ -10,8 +10,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class CategoryDao {
+public class CategoryDao implements CategoryRepository {
+    @Override
     public List<Category> findAll(boolean onlyActive) {
         String sql = "SELECT * FROM categories ORDER BY id";
         try (Connection connection = Database.getConnection();
@@ -27,6 +29,21 @@ public class CategoryDao {
         }
     }
 
+    @Override
+    public Optional<Category> findById(int id) {
+        String sql = "SELECT * FROM categories WHERE id = ?";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? Optional.of(map(rs)) : Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Cannot load category", e);
+        }
+    }
+
+    @Override
     public void save(Category category) {
         if (category.getId() == 0) {
             insert(category);
@@ -35,13 +52,14 @@ public class CategoryDao {
         }
     }
 
+    @Override
     public void delete(int id) {
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement("DELETE FROM categories WHERE id = ?")) {
             statement.setInt(1, id);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new IllegalStateException("Cannot delete category", e);
+            throw new IllegalStateException("Không thể xóa danh mục đang được món ăn hoặc dữ liệu lịch sử sử dụng.", e);
         }
     }
 

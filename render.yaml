@@ -1,12 +1,44 @@
 services:
+  - type: pserv
+    name: lau-tam-gioi-db
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./render/mysql/Dockerfile
+    dockerContext: .
+    disk:
+      name: lautamgioi-mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 10
+    envVars:
+      - key: MYSQL_DATABASE
+        value: lautamgioi_db
+      - key: MYSQL_ROOT_PASSWORD
+        generateValue: true
+
   - type: web
     name: lau-tam-gioi
-    env: docker
-    plan: free
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /lau-tam-gioi/home
     envVars:
-      - key: DB_URL
-        sync: false
+      - key: DB_HOST
+        fromService:
+          type: pserv
+          name: lau-tam-gioi-db
+          property: host
+      - key: DB_PORT
+        fromService:
+          type: pserv
+          name: lau-tam-gioi-db
+          property: port
+      - key: DB_NAME
+        value: lautamgioi_db
       - key: DB_USER
-        sync: false
+        value: root
       - key: DB_PASSWORD
-        sync: false
+        fromService:
+          type: pserv
+          name: lau-tam-gioi-db
+          envVarKey: MYSQL_ROOT_PASSWORD

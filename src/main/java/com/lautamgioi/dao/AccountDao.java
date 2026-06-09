@@ -12,23 +12,36 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Optional;
 
-public class AccountDao {
+public class AccountDao implements AccountRepository {
+    @Override
+    public Optional<Account> findById(int id) {
+        String sql = "SELECT * FROM accounts WHERE id = ? AND status = 'ACTIVE'";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? Optional.of(map(rs)) : Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Cannot find account by id", e);
+        }
+    }
+
+    @Override
     public Optional<Account> findByUsername(String username) {
         String sql = "SELECT * FROM accounts WHERE username = ? AND status = 'ACTIVE'";
         try (Connection connection = Database.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
             try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    return Optional.of(map(rs));
-                }
+                return rs.next() ? Optional.of(map(rs)) : Optional.empty();
             }
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot find account", e);
         }
-        return Optional.empty();
     }
 
+    @Override
     public int createCustomer(Account account) {
         String sql = """
                 INSERT INTO accounts(username, password, full_name, email, phone, role)
@@ -47,6 +60,24 @@ public class AccountDao {
             }
         } catch (SQLException e) {
             throw new IllegalStateException("Cannot create account", e);
+        }
+    }
+
+    @Override
+    public void updateCustomerContact(Account account) {
+        String sql = """
+                UPDATE accounts
+                SET email = ?, phone = ?
+                WHERE id = ? AND role = 'CUSTOMER' AND status = 'ACTIVE'
+                """;
+        try (Connection connection = Database.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, account.getEmail());
+            statement.setString(2, account.getPhone());
+            statement.setInt(3, account.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException("Cannot update account", e);
         }
     }
 
